@@ -19,14 +19,14 @@ void* HiloA(void* arg) {
     pthread_exit(NULL);
 }
 
-// Hilo B: Desarrollado por Integrante 2
+// Hilo B: Desarrollado por Santiago Perez 
 void* HiloB(void* arg) {
     // Esperar señal de A (P / Wait)
     sem_wait(&semAB);
     
-    printf("[Hilo B] Paso 2: Procesando información de Hilo A...\n");
+    printf("[Hilo B - Dev: Santiago Perez] Paso 2: Procesando información de Hilo A...\n");
     sleep(1);
-    printf("[Hilo B] Paso 2: Procesamiento terminado. Liberando Hilo C.\n");
+    printf("[Hilo B - Dev: Santiago Perez] Paso 2: Procesamiento terminado. Liberando Hilo C.\n");
     
     // Incrementar semáforo semBC (V / Signal)
     sem_post(&semBC);
