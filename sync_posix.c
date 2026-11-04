@@ -10,7 +10,7 @@ sem_t semBC;
 
 // Hilo A: Desarrollado por Johendry Zambrano
 void* HiloA(void* arg) {
-    printf("[Hilo A - Dev: Johendry Zambrano] Paso 1: Iniciando preparación de datos...\n");
+    printf("[Hilo A - Dev: Johendry Zambrano] Paso 1: Iniciando preparacion de datos...\n");
     sleep(1); // Simula tiempo de procesamiento (1 segundo)
     printf("[Hilo A - Dev: Johendry Zambrano] Paso 1: Datos listos. Liberando Hilo B.\n");
     
@@ -24,7 +24,7 @@ void* HiloB(void* arg) {
     // Esperar señal de A (P / Wait)
     sem_wait(&semAB);
     
-    printf("[Hilo B - Dev: Santiago Perez] Paso 2: Procesando información de Hilo A...\n");
+    printf("[Hilo B - Dev: Santiago Perez] Paso 2: Procesando informacion de Hilo A...\n");
     sleep(1);
     printf("[Hilo B - Dev: Santiago Perez] Paso 2: Procesamiento terminado. Liberando Hilo C.\n");
     
@@ -33,14 +33,14 @@ void* HiloB(void* arg) {
     pthread_exit(NULL);
 }
 
-// Hilo C: Desarrollado por Integrante 3
+// Hilo C: Desarrollado por Miguel Goncalves
 void* HiloC(void* arg) {
     // Esperar señal de B (P / Wait)
     sem_wait(&semBC);
     
-    printf("[Hilo C] Paso 3: Consolidando y mostrando resultados finales.\n");
+    printf("[Hilo C - Dev: Miguel Goncalves] Paso 3: Consolidando y mostrando resultados finales.\n");
     sleep(1);
-    printf("[Hilo C] Paso 3: Proceso completo finalizado exitosamente.\n");
+    printf("[Hilo C - Dev: Miguel Goncalves] Paso 3: Proceso completo finalizado exitosamente.\n");
     
     pthread_exit(NULL);
 }

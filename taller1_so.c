@@ -19,10 +19,15 @@ sem_t semB_C; // Notifica a C que B escribió Cifra 2
 void* HiloA(void* arg) {
     int cifra_a = 15;
     
-    // TO-DO Proteger escritura con Mutex e inicializar variable compartida
+    // Proteger escritura con Mutex e inicializar variable compartida
+    pthread_mutex_lock(&mutex_variable);
+    variable_compartida = cifra_a;
+    printf("[Hilo A - Dev: Johendry Zambrano] Escribio Cifra 1: %d\n", variable_compartida);
+    pthread_mutex_unlock(&mutex_variable);
     
+    // Notificar a Hilo C
+    sem_post(&semA_C);
     
-    // TO-DO Notificar a Hilo C
     return NULL;
 }
 
@@ -36,7 +41,7 @@ void* HiloB(void* arg) {
     //Proteger escritura con Mutex y actulizar variable compartida
 
     pthread_mutex_lock(&mutex_variable);
-        variable_compartida = cifra_b
+        variable_compartida = cifra_b;
         printf("[Hilo B - Dev: Santiago Perez] Escribio cifra 2: %d\n", variable_compartida);
 
     pthread_mutex_unlock(&mutex_variable);
@@ -49,7 +54,6 @@ void* HiloB(void* arg) {
 }
 
 // --- INTEGRANTE 3: Hilo C ---
-// --- INTEGRANTE 3: Hilo C ---
 void* HiloC(void* arg) {
     int cifra1 = 0, cifra2 = 0;
 
@@ -59,7 +63,7 @@ void* HiloC(void* arg) {
     // Proteger lectura y limpieza con Mutex
     pthread_mutex_lock(&mutex_variable);
     cifra1 = variable_compartida;
-    printf("[Hilo C - Dev: Miguel Goncalves] Leyó Cifra 1: %d. Limpiando variable...\n", cifra1);
+    printf("[Hilo C - Dev: Miguel Goncalves] Leyo Cifra 1: %d. Limpiando variable...\n", cifra1);
     variable_compartida = 0;
     pthread_mutex_unlock(&mutex_variable);
 
@@ -84,23 +88,34 @@ void* HiloC(void* arg) {
 
     return NULL;
 }
+
 int main(int argc, char *argv[]) {
     pthread_t hA, hB, hC;
 
-    // TO-DO Inicialización de Mutex y Semáforos
-
+    // Inicialización de Mutex y Semáforos
+    pthread_mutex_init(&mutex_variable, NULL);
+    sem_init(&semA_C, 0, 0); // Empieza en 0 (bloqueado)
+    sem_init(&semC_B, 0, 0);
+    sem_init(&semB_C, 0, 0);
 
     printf("=== INICIO DE LA PRUEBA DE FUEGO ===\n\n");
 
-    // TO-DO Creación de hilos
+    // Creación de hilos (el orden de creación no importa gracias a los semáforos)
+    pthread_create(&hA, NULL, HiloA, NULL);
+    pthread_create(&hB, NULL, HiloB, NULL);
+    pthread_create(&hC, NULL, HiloC, NULL);
 
+    // Esperar a que terminen
+    pthread_join(hA, NULL);
+    pthread_join(hB, NULL);
+    pthread_join(hC, NULL);
 
-    // TO-DO Esperar a que terminen
+    // Destrucción de recursos
+    pthread_mutex_destroy(&mutex_variable);
+    sem_destroy(&semA_C);
+    sem_destroy(&semC_B);
+    sem_destroy(&semB_C);
 
-
-    // TO-DO Destrucción de recursos
-
-
-    printf("\n=== FIN DE LA EJECUCIÓN ===\n");
+    printf("\n=== FIN DE LA EJECUCION ===\n");
     return 0;
 }
