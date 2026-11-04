@@ -49,16 +49,31 @@ void* HiloB(void* arg) {
 }
 
 // --- INTEGRANTE 3: Hilo C ---
+// --- INTEGRANTE 3: Hilo C ---
 void* HiloC(void* arg) {
     int cifra1 = 0, cifra2 = 0;
 
-    // TO-DO --- PARTE 1: Procesar Cifra 1 ---
-    
+    // --- PARTE 1: Procesar Cifra 1 ---
+    sem_wait(&semA_C); // Esperar a que A escriba
 
-    // TO-DO Dar paso a Hilo B
+    // Proteger lectura y limpieza con Mutex
+    pthread_mutex_lock(&mutex_variable);
+    cifra1 = variable_compartida;
+    printf("[Hilo C - Dev: Miguel Goncalves] Leyó Cifra 1: %d. Limpiando variable...\n", cifra1);
+    variable_compartida = 0;
+    pthread_mutex_unlock(&mutex_variable);
 
-    // TO-DO --- PARTE 2: Procesar Cifra 2 y Consolidar ---
+    // Dar paso a Hilo B
+    sem_post(&semC_B);
 
+    // --- PARTE 2: Procesar Cifra 2 y Consolidar ---
+    sem_wait(&semB_C); // Esperar a que B escriba
+
+    // Proteger lectura con Mutex
+    pthread_mutex_lock(&mutex_variable);
+    cifra2 = variable_compartida;
+    printf("[Hilo C - Dev: Miguel Goncalves] Leyó Cifra 2: %d.\n", cifra2);
+    pthread_mutex_unlock(&mutex_variable);
 
     // Renderizado final
     printf("\n================ RENDERIZADO DE RESULTADOS ================\n");
@@ -69,7 +84,6 @@ void* HiloC(void* arg) {
 
     return NULL;
 }
-
 int main(int argc, char *argv[]) {
     pthread_t hA, hB, hC;
 
